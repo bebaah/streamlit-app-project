@@ -45,22 +45,13 @@ elif select == "Player Analysis":
 
     pdata = df[df["Player"]==player]
 
-    stats=["100","50","4s","6s"]
-
-    chart_data = (
-        pdata[stats].iloc[0].reset_index()
-    )
-
-    chart_data.columns = ["Stat","Value"]
-
-    fig=px.bar(
-        chart_data,
-        x="Stat",
-        y="Value"
-       
-    )
+    df2=pdata[["Runs","Matches","innings","6s","4s","100","50","Ave","High_score"]]
+    df2=df2.T.reset_index() #T means transposed k rows wli values columns me ajaingi or columns wli rows me #reset_index- data frame kos ort krega
+    st.dataframe(df2)
+    fig=px.bar(df2,x="index",y=df2.columns[1],color="index")  #colunms[1]- exampls- column hyn 5 ek table me/unko hmne index(list)me lelia/or ab jo column chhye hai usme hm list ki index wise select krengy islie likha
 
 
+      #----------------KEY METRICS-------------
     col4,col5,col6,col7,col8,col9=st.columns(6)
 
     total_runs=pdata["Runs"].sum()
@@ -82,16 +73,35 @@ elif select == "Player Analysis":
     st.plotly_chart(fig,use_container_width=True)
 
 
-    #_______________Country_______________
+    #_______________Country Analysis_______________
 
 elif select == "Country Insights":
     st.title("Country Insights")
 
     country_runs = df.groupby("Country")["Runs"].sum().reset_index()
 
-    fig = px.pie(country_runs,names="Country",values="Runs")
+    fig = px.pie(
+    country_runs,
+    names="Country",
+    values="Runs"
+    )
 
     st.plotly_chart(fig,use_container_width=True)
+
+    
+
+    country_select = st.selectbox("Select Country", df["Country"].unique())
+    cdata=df[df["Country"]==country_select] #cdata-country data , country-select country islie kiu k select country me se country ko select kia hai
+
+    fig_runs=px.pie(             #sbky alag alag bar chart bnenge
+        cdata, 
+        names="Player",
+        values="Runs",
+    )
+
+    st.plotly_chart(fig_runs,use_container_width=True)
+
+
 
 
 elif select == "Comparison":
